@@ -3,7 +3,7 @@
 # Copyright (c) 2019 Stephanos Ioannidis <root@stephanos.io>
 # SPDX-License-Identifier: Apache-2.0
 
-if CPU_CORTEX
+if CPU_CORTEX || CPU_NEOVERSE
 
 config GIC
 	bool
@@ -43,4 +43,4 @@ config GIC_SINGLE_SECURITY_STATE
 	  Some ARM Cortex-family processors only supports single security
 	  state.
 
-endif # CPU_CORTEX
+endif # CPU_CORTEX || CPU_NEOVERSE

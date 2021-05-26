@@ -14,6 +14,11 @@ config CPU_CORTEX
 	help
 	  This option signifies the use of a CPU of the Cortex family.
 
+config CPU_NEOVERSE
+	bool
+	help
+	  This option signifies the use of a CPU of the Neoverse family.
+
 config ARM_CUSTOM_INTERRUPT_CONTROLLER
 	bool
 	help

@@ -42,6 +42,18 @@ config CPU_CORTEX_R82
 	help
 	  This option signifies the use of a Cortex-R82 CPU
 
+config CPU_NEOVERSE_E1
+	bool
+	select CPU_NEOVERSE
+	select HAS_FLASH_LOAD_OFFSET
+	select SCHED_IPI_SUPPORTED if SMP
+	select CPU_HAS_FPU
+	imply FPU
+	imply FPU_SHARING
+	select ARMV8_A
+	help
+	  This option signifies the use of a Neoverse-E1 CPU
+
 config HAS_ARM_SMCCC
 	bool
 	help
@@ -141,7 +153,7 @@ rsource "cortex_r/mpu/Kconfig"
 
 endif # CPU_AARCH64_CORTEX_R
 
-if CPU_CORTEX_A || CPU_AARCH64_CORTEX_R
+if CPU_CORTEX_A || CPU_AARCH64_CORTEX_R || CPU_NEOVERSE
 
 config GEN_ISR_TABLES
 	default y
@@ -258,4 +270,4 @@ config MAX_XLAT_TABLES
 
 endif # ARM_MMU
 
-endif # CPU_CORTEX_A || CPU_AARCH64_CORTEX_R
+endif # CPU_CORTEX_A || CPU_AARCH64_CORTEX_R || CPU_NEOVERSE
