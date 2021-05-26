@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2021 EdgeQ Inc.
+
+config SOC_EDGEQ_RAPTOR2
+	bool "EdgeQ Raptor2"
+	select ARM64
+	select CPU_NEOVERSE_E1
+	select ARM_ARCH_TIMER
+	select GIC_V3
