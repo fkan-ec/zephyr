@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2021 EdgeQ Inc.
+
+if BOARD_EDGEQ_RAPTOR2
+
+config BUILD_OUTPUT_BIN
+	default y if XIP
+
+config BOARD
+	default "raptor2"
+
+endif # BOARD_EDGEQ_RAPTOR2

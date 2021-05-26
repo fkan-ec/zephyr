@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2021 EdgeQ Inc.
+
+config BOARD_EDGEQ_RAPTOR2
+	bool "EdgeQ Raptor2 Board"
+	depends on SOC_EDGEQ_RAPTOR2
+	select ARM64
