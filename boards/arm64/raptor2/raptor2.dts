@@ -33,6 +33,12 @@
 			reg = <0x0 0x000>;
 		};
 
+		cpu@1 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			enable-method = "psci";
+			reg = <0x0 0x001>;
+		};
 	};
 
 	psci {
