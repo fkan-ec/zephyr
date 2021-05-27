@@ -153,6 +153,11 @@ switch_el:
 	/* EL2 init */
 	bl	z_arm64_el2_init
 
+	mrs     x0, midr_el1
+	mrs     x1, mpidr_el1
+	msr     vpidr_el2, x0
+	msr     vmpidr_el2, x1
+
 	/* Move to EL1 with all exceptions masked */
 	mov_imm	x0, (SPSR_DAIF_MASK | SPSR_MODE_EL1T)
 	msr	spsr_el2, x0
