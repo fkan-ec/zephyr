@@ -63,7 +63,7 @@
 
 	ram: memory@410000000 {
 		device_type = "mmio-sram";
-		reg = <0x04 0x10000000 0x00 DT_SIZE_M(512)>;
+		reg = <0x04 0x10000000 0x00 DT_SIZE_M(32)>;
 	};
 
 	gic: interrupt-controller@140000000 {
