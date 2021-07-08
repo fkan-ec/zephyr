@@ -22,3 +22,9 @@ properties:
       type: int
       required: false
       description: divisor latch fraction (DLF, if supported)
+
+    reg-offset:
+      type: int
+      required: false
+      description: quantity of register offset from base
+

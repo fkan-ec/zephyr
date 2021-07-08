@@ -42,6 +42,8 @@
 #define INST_HAS_DLF_HELPER(inst) DT_INST_NODE_HAS_PROP(inst, dlf) ||
 #define INST_HAS_REG_SHIFT_HELPER(inst) \
 	DT_INST_NODE_HAS_PROP(inst, reg_shift) ||
+#define INST_HAS_REG_OFFSET_HELPER(inst) \
+	DT_INST_NODE_HAS_PROP(inst, reg_offset) ||
 
 #define UART_NS16550_PCP_ENABLED \
 	(DT_INST_FOREACH_STATUS_OKAY(INST_HAS_PCP_HELPER) 0)
@@ -49,6 +51,8 @@
 	(DT_INST_FOREACH_STATUS_OKAY(INST_HAS_DLF_HELPER) 0)
 #define UART_NS16550_REG_INTERVAL_ENABLED \
 	(DT_INST_FOREACH_STATUS_OKAY(INST_HAS_REG_SHIFT_HELPER) 0)
+#define UART_NS16550_REG_OFFSET_ENABLED \
+	(DT_INST_FOREACH_STATUS_OKAY(INST_HAS_REG_OFFSET_HELPER) 0)
 
 #if DT_ANY_INST_ON_BUS_STATUS_OKAY(pcie)
 BUILD_ASSERT(IS_ENABLED(CONFIG_PCIE), "NS16550(s) in DT need CONFIG_PCIE");
@@ -196,19 +200,19 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_PCIE), "NS16550(s) in DT need CONFIG_PCIE");
 #define DEV_DATA(dev) \
 	((struct uart_ns16550_dev_data *)(dev)->data)
 
-#define THR(dev) (get_port(dev) + REG_THR * reg_interval(dev))
-#define RDR(dev) (get_port(dev) + REG_RDR * reg_interval(dev))
-#define BRDL(dev) (get_port(dev) + REG_BRDL * reg_interval(dev))
-#define BRDH(dev) (get_port(dev) + REG_BRDH * reg_interval(dev))
-#define IER(dev) (get_port(dev) + REG_IER * reg_interval(dev))
-#define IIR(dev) (get_port(dev) + REG_IIR * reg_interval(dev))
-#define FCR(dev) (get_port(dev) + REG_FCR * reg_interval(dev))
-#define LCR(dev) (get_port(dev) + REG_LCR * reg_interval(dev))
-#define MDC(dev) (get_port(dev) + REG_MDC * reg_interval(dev))
-#define LSR(dev) (get_port(dev) + REG_LSR * reg_interval(dev))
-#define MSR(dev) (get_port(dev) + REG_MSR * reg_interval(dev))
-#define DLF(dev) (get_port(dev) + REG_DLF)
-#define PCP(dev) (get_port(dev) + REG_PCP)
+#define THR(dev) (get_port(dev) + reg_offset(dev) + REG_THR * reg_interval(dev))
+#define RDR(dev) (get_port(dev) + reg_offset(dev) + REG_RDR * reg_interval(dev))
+#define BRDL(dev) (get_port(dev) + reg_offset(dev) + REG_BRDL * reg_interval(dev))
+#define BRDH(dev) (get_port(dev) + reg_offset(dev) + REG_BRDH * reg_interval(dev))
+#define IER(dev) (get_port(dev) + reg_offset(dev) + REG_IER * reg_interval(dev))
+#define IIR(dev) (get_port(dev) + reg_offset(dev) + REG_IIR * reg_interval(dev))
+#define FCR(dev) (get_port(dev) + reg_offset(dev) + REG_FCR * reg_interval(dev))
+#define LCR(dev) (get_port(dev) + reg_offset(dev) + REG_LCR * reg_interval(dev))
+#define MDC(dev) (get_port(dev) + reg_offset(dev) + REG_MDC * reg_interval(dev))
+#define LSR(dev) (get_port(dev) + reg_offset(dev) + REG_LSR * reg_interval(dev))
+#define MSR(dev) (get_port(dev) + reg_offset(dev) + REG_MSR * reg_interval(dev))
+#define DLF(dev) (get_port(dev) + reg_offset(dev) + REG_DLF)
+#define PCP(dev) (get_port(dev) + reg_offset(dev) + REG_PCP)
 
 #define IIRC(dev) (DEV_DATA(dev)->iir_cache)
 
@@ -248,6 +252,11 @@ struct uart_ns16550_device_config {
 #if UART_NS16550_REG_INTERVAL_ENABLED
 	uint8_t reg_interval;
 #endif
+
+#if UART_NS16550_REG_OFFSET_ENABLED
+	uint32_t reg_offset;
+#endif
+
 #if DT_ANY_INST_ON_BUS_STATUS_OKAY(pcie)
 	bool pcie;
 	pcie_bdf_t pcie_bdf;
@@ -294,6 +303,20 @@ static inline uint8_t reg_interval(const struct device *dev)
 #else
 #define reg_interval(dev) DEFAULT_REG_INTERVAL
 #endif
+
+#if UART_NS16550_REG_OFFSET_ENABLED
+static inline uint8_t reg_offset(const struct device *dev)
+{
+	if (DEV_CFG(dev)->reg_offset) {
+		return DEV_CFG(dev)->reg_offset;
+	}
+
+	return 0;
+}
+#else
+#define reg_offset(dev) 0
+#endif
+
 
 static const struct uart_driver_api uart_ns16550_driver_api;
 
@@ -1051,6 +1074,12 @@ static const struct uart_driver_api uart_ns16550_driver_api = {
 #define DEV_CONFIG_REG_INT_INIT(n) \
 	_CONCAT(DEV_CONFIG_REG_INT, DT_INST_NODE_HAS_PROP(n, reg_shift))(n)
 
+#define DEV_CONFIG_REG_OFF0(n)
+#define DEV_CONFIG_REG_OFF1(n) \
+	.reg_offset = DT_INST_PROP(n, reg_offset),
+#define DEV_CONFIG_REG_OFF_INIT(n) \
+	_CONCAT(DEV_CONFIG_REG_OFF, DT_INST_NODE_HAS_PROP(n, reg_offset))(n)
+
 #define DEV_CONFIG_PCIE0(n)
 #define DEV_CONFIG_PCIE1(n)              \
 	.pcie = true,                    \
@@ -1078,6 +1107,7 @@ static const struct uart_driver_api uart_ns16550_driver_api = {
 		DEV_CONFIG_IRQ_FUNC_INIT(n)                                          \
 		DEV_CONFIG_PCP_INIT(n)                                               \
 		DEV_CONFIG_REG_INT_INIT(n)                                           \
+		DEV_CONFIG_REG_OFF_INIT(n)                                           \
 		DEV_CONFIG_PCIE_INIT(n)                                              \
 	};                                                                           \
 	static struct uart_ns16550_dev_data uart_ns16550_dev_data_##n = {            \
