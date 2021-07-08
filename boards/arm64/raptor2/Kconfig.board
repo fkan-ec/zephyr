@@ -5,3 +5,19 @@ config BOARD_EDGEQ_RAPTOR2
 	bool "EdgeQ Raptor2 Board"
 	depends on SOC_EDGEQ_RAPTOR2
 	select ARM64
+	select BOOT_BANNER
+
+config BOARD_EDGEQ_RAPTOR2_SOCFM
+	bool "EdgeQ Raptor2 SOCFM"
+	depends on BOARD_EDGEQ_RAPTOR2
+	default n
+
+config BOARD_EDGEQ_RAPTOR2_PROTIUM
+	bool "EdgeQ Raptor2 Protium"
+	depends on BOARD_EDGEQ_RAPTOR2
+	default n
+
+config BOARD_EDGEQ_RAPTOR2_PROTIUM_SINGLE_PPU
+	bool "EdgeQ Raptor2 Protium"
+	depends on BOARD_EDGEQ_RAPTOR2
+	default n

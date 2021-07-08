@@ -1,0 +1,98 @@
+/*
+ * Copyright 2021 EdgeQ Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <mem.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
+/ {
+	model = "EdgeQ Raptor2";
+	compatible = "edgeq,raptor2";
+	interrupt-parent = <&gic>;
+	#address-cells = <0x02>;
+	#size-cells = <0x02>;
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,sram = &ram;
+	};
+
+	cpus {
+		#address-cells = <0x02>;
+		#size-cells = <0x00>;
+
+		cpu@10000 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			enable-method = "psci";
+			reg = <0x0 0x10000>;
+		};
+
+	};
+
+	psci {
+		compatible = "arm,psci-0.2";
+		method = "smc";
+		label = "PSCI";
+	};
+
+	ram: memory@410000000 {
+		device_type = "mmio-sram";
+		reg = <0x04 0x10000000 0x00 DT_SIZE_M(1024)>;
+	};
+
+	gic: interrupt-controller@140000000 {
+		compatible = "arm,gic";
+		#interrupt-cells = <4>;
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+		interrupt-controller;
+		reg =   <0x1 0x40000000 0x0 0x40000>,
+			<0x1 0x401C0000 0x0 0x80000>;
+		label = "GIC";
+	};
+
+	timer {
+		compatible = "arm,armv8-timer";
+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY
+			      GIC_PPI 14 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY
+			      GIC_PPI 11 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY
+			      GIC_PPI 10 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+		interrupt-parent = <&gic>;
+		label = "arch_timer";
+	};
+
+	uart0: uart@70434000 {
+		compatible = "ns16550";
+		reg = <0 0x70434000 0x0 0x1000>;
+		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+		clock-frequency = <1843200>;
+		current-speed = <19200>;
+		reg-shift = <3>;
+		reg-offset = <0x40>;
+		label = "UART_0";
+		status = "okay";
+	};
+
+	raptor2_mmio@64400000 {
+		compatible = "raptor2,mmio";
+		reg = <0x00 0x60500000 0x0 0x4000>,	/* ADMAREG */
+		      <0x01 0x80000000 0x0 0x30000>,	/* OCM */
+		      <0x00 0x1c200000 0x0 0x40000>,	/* OLMEM */
+		      <0x00 0x1c800000 0x0 0x80000>,	/* PLMEM */
+		      <0x00 0x62400000 0x0 0xA00000>,	/* MXL1REG */
+		      <0x00 0x63400000 0x0 0xA00000>,   /* MXL2REG */
+		      <0x00 0x64400000 0x0 0x3C0000>,	/* CRSSREG */
+		      <0x00 0x1c880000 0x0 0x80000>;	/* CRSSMEMSS */
+
+		status = "okay";
+		label = "RAPTOR2_MMIO";
+	};
+
+};
