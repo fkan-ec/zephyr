@@ -4,6 +4,8 @@
 #include <device.h>
 #include <devicetree.h>
 
+#define SIF_REG_EVENT_TO_CPU_BASE	0x69080540UL
+
 typedef void (*irq_config_func_t)(const struct device *dev);
 
 struct doorbell_data {
@@ -18,11 +20,23 @@ struct doorbell_cfg {
 
 void doorbell_isr(struct device *dev)
 {
+	uint32_t bit_pos;
+	uint32_t bit_base_offset;
+	uint32_t value;
+	mem_addr_t reg_addr;
 	struct doorbell_data *data;
 	struct doorbell_cfg *config;
 
 	data = (struct doorbell_data *)dev->data;
 	config = (struct doorbell_cfg *)dev->config;
+
+	bit_pos = (config->irq - 32) % 32;
+	bit_base_offset = (config->irq - 32) / 32;
+	reg_addr = (mem_addr_t) (SIF_REG_EVENT_TO_CPU_BASE + (bit_base_offset * 4));
+
+	value = sys_read32(reg_addr);
+	value = value & (uint32_t)(~(1 << bit_pos));
+	sys_write32(value, reg_addr);
 
 	data->isr_count++;
 	printk("Doorbell ISR triggered %d for irq %d\n", data->isr_count, config->irq);
