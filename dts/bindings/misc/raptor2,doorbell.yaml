@@ -1,0 +1,12 @@
+description: RAPTOR2 DOORBELL
+
+compatible: "raptor2,doorbell"
+
+include: base.yaml
+
+properties:
+    reg:
+      required: true
+
+    interrupts:
+      required: true

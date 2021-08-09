@@ -1,0 +1,6 @@
+config RAPTOR2_DOORBELL
+	bool "Enable Raptor2 Doorbell Mechanism"
+	default n
+	help
+	  Enable interrupt doorbell mechanism.
+

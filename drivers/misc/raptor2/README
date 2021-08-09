@@ -1,0 +1,16 @@
+This is a sample driver to show how we can initialize a device and make use of
+regular interrupts.
+
+Example of device tree node:
+
+doorbell0: raptor2_doorbell@deadbeef {
+	compatible = "raptor2,doorbell";
+	reg = <0x00 0xdeadbeef 0x0 0x01>;
+	interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+	label = "DOORBELL_0";
+	status = "okay";
+};
+
+Configurations needed to enable driver:
+
+CONFIG_RAPTOR2_DOORBELL=y

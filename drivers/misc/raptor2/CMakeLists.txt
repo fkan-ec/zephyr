@@ -1,0 +1,1 @@
+zephyr_sources_ifdef(CONFIG_RAPTOR2_DOORBELL	raptor2_doorbell.c)
