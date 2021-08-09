@@ -14,6 +14,7 @@ struct doorbell_data {
 
 struct doorbell_cfg {
 	uint32_t irq;
+	uint32_t affinity;
 	uint64_t mem_base;
 	irq_config_func_t irq_config_func;
 };
@@ -39,7 +40,8 @@ void doorbell_isr(struct device *dev)
 	sys_write32(value, reg_addr);
 
 	data->isr_count++;
-	printk("Doorbell ISR triggered %d for irq %d\n", data->isr_count, config->irq);
+	printk("Doorbell ISR triggered %d for irq %d with mpidr 0x%llx\n",
+		data->isr_count, config->irq, GET_MPIDR());
 }
 
 static int doorbell_init(const struct device *dev)
@@ -49,6 +51,7 @@ static int doorbell_init(const struct device *dev)
 	config = (struct doorbell_cfg *)dev->config;
 
 	config->irq_config_func(dev);
+	z_arm64_irq_affinity_set(config->irq, config->affinity);
 
 	return 0;
 }
@@ -70,6 +73,7 @@ static int doorbell_init(const struct device *dev)
 	}; \
 	static struct doorbell_cfg doorbell_cfg_##n = { \
 		.irq = DT_INST_IRQN(n), \
+		.affinity = DT_INST_PROP(n, cpu_affinity), \
 		.mem_base = DT_INST_REG_ADDR(n), \
 		.irq_config_func = doorbell_irq_config_func_##n, \
 	}; \

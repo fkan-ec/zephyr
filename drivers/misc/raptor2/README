@@ -7,6 +7,7 @@ doorbell0: raptor2_doorbell@deadbeef {
 	compatible = "raptor2,doorbell";
 	reg = <0x00 0xdeadbeef 0x0 0x01>;
 	interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+	cpu-affinity = <0>;
 	label = "DOORBELL_0";
 	status = "okay";
 };

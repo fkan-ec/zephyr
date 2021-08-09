@@ -10,3 +10,9 @@ properties:
 
     interrupts:
       required: true
+
+    cpu-affinity:
+      type: int
+      default: 0
+      required: false
+      description: cpu number to set irq affinity (should be less than CONFIG_MP_NUM_CPUS)
