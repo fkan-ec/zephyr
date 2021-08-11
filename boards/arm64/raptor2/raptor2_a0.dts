@@ -109,35 +109,6 @@
 			enable-method = "psci";
 			reg = <0x0 0x501>;
 		};
-
-		cpu@10000 {
-			device_type = "cpu";
-			compatible = "arm,neoverse-e1";
-			enable-method = "psci";
-			reg = <0x0 0x10000>;
-		};
-
-		cpu@10001 {
-			device_type = "cpu";
-			compatible = "arm,neoverse-e1";
-			enable-method = "psci";
-			reg = <0x0 0x10001>;
-		};
-
-		cpu@10100 {
-			device_type = "cpu";
-			compatible = "arm,neoverse-e1";
-			enable-method = "psci";
-			reg = <0x0 0x10100>;
-		};
-
-		cpu@10101 {
-			device_type = "cpu";
-			compatible = "arm,neoverse-e1";
-			enable-method = "psci";
-			reg = <0x0 0x10101>;
-		};
-
 	};
 
 	psci {
