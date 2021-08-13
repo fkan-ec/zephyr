@@ -45,6 +45,14 @@ volatile struct boot_params __aligned(L1_CACHE_BYTES) arm64_cpu_boot_params = {
 	.mpid = -1,
 };
 
+volatile struct {
+	uint32_t cpu_num;
+	uint64_t mpidr;
+	bool is_online;
+} cpu_logical_list[CONFIG_MP_NUM_CPUS];
+
+int is_primary_init_done = 0;
+
 #define CPU_REG_ID(cpu_node_id) DT_REG_ADDR(cpu_node_id),
 
 static const uint64_t cpu_node_list[] = {
@@ -52,6 +60,16 @@ static const uint64_t cpu_node_list[] = {
 };
 
 extern void z_arm64_mm_init(bool is_primary_core);
+
+void arm64_smp_cpu_init(int cpu_id)
+{
+	cpu_logical_list[cpu_id].is_online = true;
+	cpu_logical_list[cpu_id].cpu_num = cpu_id;
+	cpu_logical_list[cpu_id].mpidr = GET_MPIDR();
+
+	if (cpu_id == 0)
+		is_primary_init_done = 1;
+}
 
 /* Called from Zephyr initialization */
 void arch_start_cpu(int cpu_num, k_thread_stack_t *stack, int sz,
@@ -64,6 +82,9 @@ void arch_start_cpu(int cpu_num, k_thread_stack_t *stack, int sz,
 	/* Now it is on master core */
 	__ASSERT(arch_curr_cpu()->id == 0, "");
 	master_core_mpid = MPIDR_TO_CORE(GET_MPIDR());
+
+	if (!is_primary_init_done)
+		arm64_smp_cpu_init(0);
 
 	cpu_count = ARRAY_SIZE(cpu_node_list);
 	__ASSERT(cpu_count == CONFIG_MP_NUM_CPUS,
@@ -136,6 +157,7 @@ void z_arm64_secondary_start(void)
 	irq_enable(SGI_FPU_IPI);
 #endif
 #endif
+	arm64_smp_cpu_init(cpu_num);
 
 	fn = arm64_cpu_boot_params.fn;
 	arg = arm64_cpu_boot_params.arg;
@@ -158,12 +180,24 @@ void z_arm64_secondary_start(void)
 static void broadcast_ipi(unsigned int ipi)
 {
 	const uint64_t mpidr = GET_MPIDR();
+	int i;
+	uint16_t target_list;
+	uint64_t cluster_id;
 
 	/*
 	 * Send SGI to all cores except itself
 	 * Note: Assume only one Cluster now.
 	 */
-	gic_raise_sgi(ipi, mpidr, SGIR_TGT_MASK & ~(1 << MPIDR_TO_CORE(mpidr)));
+	for (i = 0; i < CONFIG_MP_NUM_CPUS; i++) {
+		if (!cpu_logical_list[i].is_online)
+			continue;
+		if (cpu_logical_list[i].mpidr == mpidr)
+			continue;
+
+		cluster_id = cpu_logical_list[i].mpidr & ~0xFFUL;
+		target_list = 1 << (cpu_logical_list[i].mpidr & 0xFF);
+		gic_raise_sgi(ipi, cluster_id, target_list);
+	}
 }
 
 void sched_ipi_handler(const void *unused)
