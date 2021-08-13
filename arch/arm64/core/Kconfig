@@ -47,9 +47,9 @@ config CPU_NEOVERSE_E1
 	select CPU_NEOVERSE
 	select HAS_FLASH_LOAD_OFFSET
 	select SCHED_IPI_SUPPORTED if SMP
-	select CPU_HAS_FPU
-	imply FPU
-	imply FPU_SHARING
+#	select CPU_HAS_FPU
+#	imply FPU
+#	imply FPU_SHARING
 	select ARMV8_A
 	help
 	  This option signifies the use of a Neoverse-E1 CPU
