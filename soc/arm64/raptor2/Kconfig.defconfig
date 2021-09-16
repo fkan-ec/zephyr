@@ -10,7 +10,7 @@ config SOC
 config NUM_IRQS
 	# must be >= the highest interrupt number used
 	# - include the UART interrupts
-	default 256
+	default 1024
 
 config SYS_CLOCK_HW_CYCLES_PER_SEC
 	default 10000000
