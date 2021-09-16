@@ -74,7 +74,11 @@ static void coredump_logging_backend_buffer_output(uint8_t *buf, size_t buflen)
 
 		if ((log_ptr >= LOG_BUF_SZ) || (remaining == 0)) {
 			log_buf[log_ptr] = '\0';
+#ifdef CONFIG_ARM64
+			printk("#CD:%s\n", log_buf);
+#else
 			LOG_ERR(COREDUMP_PREFIX_STR "%s", log_strdup(log_buf));
+#endif
 			log_ptr = 0;
 		}
 	}

@@ -17,6 +17,11 @@
 #include <logging/log.h>
 #include <exc_handle.h>
 
+#ifdef CONFIG_DEBUG_COREDUMP
+extern uint64_t z_aarch64_coredump_fault_sp;
+extern uint64_t z_aarch64_coredump_fault_far;
+#endif
+
 LOG_MODULE_DECLARE(os, CONFIG_KERNEL_LOG_LEVEL);
 
 #ifdef CONFIG_USERSPACE
@@ -235,8 +240,14 @@ void z_arm64_fatal_error(unsigned int reason, z_arch_esf_t *esf)
 		}
 	}
 
+#ifdef CONFIG_DEBUG_COREDUMP
+        z_aarch64_coredump_fault_sp = POINTER_TO_UINT(esf);
+        z_aarch64_coredump_fault_far = far;
+#endif
+
 #ifdef CONFIG_EXCEPTION_DEBUG
 	if (esf != NULL) {
+		k_busy_wait(5000);
 		esf_dump(esf);
 	}
 #endif /* CONFIG_EXCEPTION_DEBUG */
