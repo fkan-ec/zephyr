@@ -112,6 +112,11 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 7),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 
+	MMU_REGION_FLAT_ENTRY("SIFREG",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 8),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 8),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
 #else
 #error "Please define UART MMU region mapping"
 #endif
