@@ -82,7 +82,7 @@ void arch_start_cpu(int cpu_num, k_thread_stack_t *stack, int sz,
 
 	/* Now it is on master core */
 	__ASSERT(arch_curr_cpu()->id == 0, "");
-	master_core_mpid = MPIDR_TO_CORE(GET_MPIDR());
+	master_core_mpid = cpu_node_list[0];
 
 	if (!is_primary_init_done)
 		arm64_smp_cpu_init(0);
