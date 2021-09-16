@@ -32,7 +32,8 @@ static ALWAYS_INLINE unsigned int arch_irq_lock(void)
 	 * IRQs.
 	 */
 	key = read_daif();
-	disable_irq();
+	if ((key & DAIF_IRQ_BIT) == 0)
+		disable_irq();
 
 	return key;
 }

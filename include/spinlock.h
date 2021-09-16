@@ -133,6 +133,7 @@ static ALWAYS_INLINE k_spinlock_key_t k_spin_lock(struct k_spinlock *l)
 #endif
 
 #ifdef CONFIG_SMP
+	__asm__("PRFM PSTL1KEEP, %0" : : "Q"(l->locked));
 	while (!atomic_cas(&l->locked, 0, 1)) {
 	}
 #endif
