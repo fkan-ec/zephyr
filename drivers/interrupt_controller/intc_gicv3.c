@@ -14,6 +14,12 @@
 /* Redistributor base addresses for each core */
 mem_addr_t gic_rdists[CONFIG_MP_NUM_CPUS];
 
+#ifdef CONFIG_SMP
+uint64_t mpidr_list[CONFIG_MP_NUM_CPUS];
+#endif
+uint64_t primary_cpu_mpidr;
+
+
 #if defined(CONFIG_ARMV8_A_NS) || defined(CONFIG_GIC_SINGLE_SECURITY_STATE)
 #define IGROUPR_VAL	0xFFFFFFFFU
 #else
@@ -78,6 +84,58 @@ void arm_gic_irq_set_priority(unsigned int intid,
 	}
 }
 
+static uint64_t gic_mpidr_to_affinity(uint64_t mpidr)
+{
+	uint64_t aff;
+
+	aff = ((uint64_t)MPIDR_AFFLVL(mpidr, 3) << 32 |
+			MPIDR_AFFLVL(mpidr, 2) << 16 |
+			MPIDR_AFFLVL(mpidr, 1) << 8  |
+			MPIDR_AFFLVL(mpidr, 0));
+
+	return aff;
+}
+
+void __arm_gic_irq_set_affinity(uint64_t mpidr, uint32_t intid)
+{
+	mem_addr_t base = GIC_DIST_BASE;
+	uint64_t affinity;
+
+	affinity = gic_mpidr_to_affinity(mpidr);
+
+	sys_write64(affinity, IROUTER(base, intid));
+}
+
+int arm_gic_irq_set_affinity(uint32_t cpu_num, uint32_t intid)
+{
+	uint64_t mpidr;
+
+#ifdef CONFIG_SMP
+#if CONFIG_MP_NUM_CPUS > 1
+	if (cpu_num > CONFIG_MP_NUM_CPUS) {
+		printk("%s: %d: Invalid cpu_id %d\n",
+				__func__, __LINE__, cpu_num);
+		return -EINVAL;
+	}
+
+	mpidr = mpidr_list[cpu_num];
+
+	if ((cpu_num > 0) && (mpidr == 0)) {
+		printk("%s: cpu_num %d invalid mpidr %llx\n",
+			__func__, cpu_num, mpidr);
+		return -EAGAIN;
+	}
+#else
+	mpidr = primary_cpu_mpidr;
+#endif
+#else
+	mpidr = primary_cpu_mpidr;
+#endif
+	__arm_gic_irq_set_affinity(mpidr, intid);
+
+	return 0;
+}
+
 void arm_gic_irq_enable(unsigned int intid)
 {
 	uint32_t mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));
@@ -92,8 +150,7 @@ void arm_gic_irq_enable(unsigned int intid)
 	 * SPI's affinity, now set it to be the PE on which it is enabled.
 	 */
 	if (GIC_IS_SPI(intid))
-		sys_write64(MPIDR_TO_CORE(GET_MPIDR()),
-				IROUTER(GET_DIST_BASE(intid), intid));
+		__arm_gic_irq_set_affinity(primary_cpu_mpidr, intid);
 #endif
 }
 
@@ -332,7 +389,7 @@ static void __arm_gic_init(void)
 	uint8_t cpu;
 
 	cpu = arch_curr_cpu()->id;
-	gic_rdists[cpu] = GIC_RDIST_BASE + MPIDR_TO_CORE(GET_MPIDR()) * 0x20000;
+	gic_rdists[cpu] = GIC_RDIST_BASE + (cpu * 0x20000);
 
 	gicv3_rdist_enable(gic_get_rdist());
 
@@ -343,6 +400,10 @@ int arm_gic_init(const struct device *unused)
 {
 	ARG_UNUSED(unused);
 
+	primary_cpu_mpidr = GET_MPIDR();
+#ifdef CONFIG_SMP
+	mpidr_list[0] = primary_cpu_mpidr;
+#endif
 	gicv3_dist_init();
 
 	__arm_gic_init();
@@ -354,6 +415,7 @@ SYS_INIT(arm_gic_init, PRE_KERNEL_1, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 #ifdef CONFIG_SMP
 void arm_gic_secondary_init(void)
 {
+	mpidr_list[arch_curr_cpu()->id] = GET_MPIDR();
 	__arm_gic_init();
 }
 #endif
