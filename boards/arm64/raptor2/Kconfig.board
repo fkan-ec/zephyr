@@ -21,3 +21,14 @@ config BOARD_EDGEQ_RAPTOR2_PROTIUM_SINGLE_PPU
 	bool "EdgeQ Raptor2 Protium"
 	depends on BOARD_EDGEQ_RAPTOR2
 	default n
+
+config BOARD_EDGEQ_RAPTOR2_A0
+	bool "EdgeQ Raptor2 A0 Silicon"
+	depends on BOARD_EDGEQ_RAPTOR2
+	default n
+
+config BOARD_EDGEQ_RAPTOR2_A0_PPU
+	bool "EdgeQ Raptor2 A0 Silicon"
+	depends on BOARD_EDGEQ_RAPTOR2
+	default n
+

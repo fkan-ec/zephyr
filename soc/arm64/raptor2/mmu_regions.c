@@ -66,7 +66,11 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 7),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 
-#elif defined(CONFIG_BOARD_EDGEQ_RAPTOR2_PROTIUM) || defined(CONFIG_BOARD_EDGEQ_RAPTOR2_PROTIUM_SINGLE_PPU)
+#elif defined(CONFIG_BOARD_EDGEQ_RAPTOR2_PROTIUM) || \
+	defined(CONFIG_BOARD_EDGEQ_RAPTOR2_PROTIUM_SINGLE_PPU) || \
+	defined (CONFIG_BOARD_EDGEQ_RAPTOR2_A0) || \
+	defined (CONFIG_BOARD_EDGEQ_RAPTOR2_A0_PPU)
+
 	MMU_REGION_FLAT_ENTRY("UART",
 			      DT_REG_ADDR(DT_INST(0, ns16550)),
 			      DT_REG_SIZE(DT_INST(0, ns16550)),
