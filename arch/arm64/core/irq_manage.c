@@ -51,6 +51,16 @@ void z_arm64_irq_priority_set(unsigned int irq, unsigned int prio, uint32_t flag
 {
 	arm_gic_irq_set_priority(irq, prio, flags);
 }
+__weak int arm_gic_irq_set_affinity(uint32_t cpu_num, uint32_t intid)
+{
+	return 0;
+}
+
+int z_arm64_irq_affinity_set(unsigned int irq, unsigned int cpu_num)
+{
+	return arm_gic_irq_set_affinity(cpu_num, irq);
+}
+
 #endif /* !CONFIG_ARM_CUSTOM_INTERRUPT_CONTROLLER */
 
 #ifdef CONFIG_DYNAMIC_INTERRUPTS

@@ -42,6 +42,7 @@ extern int arch_irq_is_enabled(unsigned int irq);
 /* internal routine documented in C file, needed by IRQ_CONNECT() macro */
 extern void z_arm64_irq_priority_set(unsigned int irq, unsigned int prio,
 				     uint32_t flags);
+extern int z_arm64_irq_affinity_set(unsigned int irq, unsigned int cpu_num);
 
 #else
 
