@@ -49,6 +49,7 @@ volatile struct {
 	uint32_t cpu_num;
 	uint64_t mpidr;
 	bool is_online;
+	char pad[] __aligned(L1_CACHE_BYTES);
 } cpu_logical_list[CONFIG_MP_NUM_CPUS];
 
 int is_primary_init_done = 0;
@@ -184,6 +185,7 @@ static void broadcast_ipi(unsigned int ipi)
 	uint16_t target_list;
 	uint64_t cluster_id;
 
+	__asm__("PRFM PSTL1KEEP, %0" : : "Q"(cpu_logical_list));
 	/*
 	 * Send SGI to all cores except itself
 	 * Note: Assume only one Cluster now.
