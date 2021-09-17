@@ -1,0 +1,26 @@
+
+Enable below options via menuconfig or defconfig for coredump:
+CONFIG_DEBUG_COREDUMP
+CONFIG_DEBUG_COREDUMP_MEMORY_DUMP_MIN
+
+More information on zephyr coredump and above options:
+https://docs.zephyrproject.org/latest/guides/debug_tools/coredump.html
+
+-------------------------ARM64 Coredump parsing -----------------------------------------
+
+1. Copy Coredump log to coredump.log
+Copy from <err> coredump: #CD:BEGIN# till <err> coredump: #CD:END#
+
+2. Convert coredump.log to coredump.bin
+./scripts/coredump/coredump_serial_log_parser.py coredump.log coredump.bin
+
+3.Start zephyr gdb server
+./scripts/coredump/coredump_gdbserver.py build/zephyr/zephyr.elf coredump.bin
+
+4.Start gdb client from zephyr aarch64 toolchain
+e.g. toolchain installed at  ~/opt/zephyr-sdk/
+~/opt/zephyr-sdk/aarch64-zephyr-elf/bin/aarch64-zephyr-elf-gdb build/zephyr/zephyr.elf
+
+5. Inside gdb connect to target
+target remote localhost:1234
+-------------------------------------------------------------------------------------------
