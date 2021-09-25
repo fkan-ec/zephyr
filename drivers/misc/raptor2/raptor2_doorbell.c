@@ -4,7 +4,15 @@
 #include <device.h>
 #include <devicetree.h>
 
+/* Enable / Disable SIF register based interrupts */
+#define SIF_REG_INT	0
+
+#if SIF_REG_INT
 #define SIF_REG_EVENT_TO_CPU_BASE	0x69080540UL
+
+#define GIC_SPI_INT_BASE	32
+#define NUM_INTR_PER_REG	32
+#endif
 
 typedef void (*irq_config_func_t)(const struct device *dev);
 
@@ -14,30 +22,53 @@ struct doorbell_data {
 
 struct doorbell_cfg {
 	uint32_t irq;
+	uint32_t rbell_irq;
 	uint32_t affinity;
 	uint64_t mem_base;
 	irq_config_func_t irq_config_func;
 };
 
-void doorbell_isr(struct device *dev)
+#if SIF_REG_INT
+static void doorbell_update_irq_bit(uint32_t irq, bool value)
 {
 	uint32_t bit_pos;
 	uint32_t bit_base_offset;
-	uint32_t value;
 	mem_addr_t reg_addr;
+
+	bit_pos = irq % NUM_INTR_PER_REG;
+	bit_base_offset = irq / NUM_INTR_PER_REG;
+	reg_addr = (mem_addr_t) (SIF_REG_EVENT_TO_CPU_BASE + (bit_base_offset * 4));
+
+	if (value) {
+		sys_write32(sys_read32(reg_addr) | (uint32_t)(1 << bit_pos),
+			    reg_addr);
+	} else {
+		sys_write32(sys_read32(reg_addr) & (uint32_t)(~(1 << bit_pos)),
+			    reg_addr);
+	}
+}
+#endif
+
+void doorbell_isr(struct device *dev)
+{
 	struct doorbell_data *data;
 	struct doorbell_cfg *config;
 
 	data = (struct doorbell_data *)dev->data;
 	config = (struct doorbell_cfg *)dev->config;
 
-	bit_pos = (config->irq - 32) % 32;
-	bit_base_offset = (config->irq - 32) / 32;
-	reg_addr = (mem_addr_t) (SIF_REG_EVENT_TO_CPU_BASE + (bit_base_offset * 4));
+#if SIF_REG_INT
+	/* GIC SPI interrupt number will be (actual hwirq + GIC_SPI_INT_BASE) */
+	doorbell_update_irq_bit((config->irq - GIC_SPI_INT_BASE), 0);
 
-	value = sys_read32(reg_addr);
-	value = value & (uint32_t)(~(1 << bit_pos));
-	sys_write32(value, reg_addr);
+	/* Sample code to trigger irq on remote end (Linux) */
+
+	/* SIF: Use actual hwirq number for Linux side remote irq */
+	//doorbell_update_irq_bit(config->rbell_irq, 1);
+#else
+	/* GIC-SPI: Set the Linux side interrupt as pending inside GIC */
+	//z_arm64_spi_irq_set_pending(config->rbell_irq);
+#endif
 
 	data->isr_count++;
 	printk("Doorbell ISR triggered %d for irq %d with mpidr 0x%llx\n",
@@ -73,6 +104,7 @@ static int doorbell_init(const struct device *dev)
 	}; \
 	static struct doorbell_cfg doorbell_cfg_##n = { \
 		.irq = DT_INST_IRQN(n), \
+		.rbell_irq = DT_INST_PROP(n, rbell_irq), \
 		.affinity = DT_INST_PROP(n, cpu_affinity), \
 		.mem_base = DT_INST_REG_ADDR(n), \
 		.irq_config_func = doorbell_irq_config_func_##n, \

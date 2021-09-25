@@ -11,6 +11,11 @@ properties:
     interrupts:
       required: true
 
+    rbell-irq:
+      type: int
+      required: true
+      description: remote irq number for Linux
+
     cpu-affinity:
       type: int
       default: 0
