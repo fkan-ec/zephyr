@@ -136,6 +136,24 @@ int arm_gic_irq_set_affinity(uint32_t cpu_num, uint32_t intid)
 	return 0;
 }
 
+void arm_gic_spi_irq_set_pending(unsigned int intid)
+{
+	uint32_t mask, idx;
+
+	/* Convert SPI irq number to irq number */
+	intid += GIC_SPI_INT_BASE;
+
+	mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));
+	idx = intid / GIC_NUM_INTR_PER_REG;
+
+	/* poll to ensure previous write (if any) is complete */
+	gic_wait_rwp(intid);
+
+	sys_write32(mask, ISPENDR(GET_DIST_BASE(intid), idx));
+	/* poll to ensure write is complete */
+	gic_wait_rwp(intid);
+}
+
 void arm_gic_irq_enable(unsigned int intid)
 {
 	uint32_t mask = BIT(intid & (GIC_NUM_INTR_PER_REG - 1));

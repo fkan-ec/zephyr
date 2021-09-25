@@ -61,6 +61,16 @@ int z_arm64_irq_affinity_set(unsigned int irq, unsigned int cpu_num)
 	return arm_gic_irq_set_affinity(cpu_num, irq);
 }
 
+__weak void arm_gic_spi_irq_set_pending(unsigned int intid)
+{
+	return;
+}
+
+void z_arm64_spi_irq_set_pending(unsigned int intid)
+{
+	arm_gic_spi_irq_set_pending(intid);
+}
+
 #endif /* !CONFIG_ARM_CUSTOM_INTERRUPT_CONTROLLER */
 
 #ifdef CONFIG_DYNAMIC_INTERRUPTS
