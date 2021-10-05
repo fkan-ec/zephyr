@@ -121,6 +121,91 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 8),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 
+	MMU_REGION_FLAT_ENTRY("OTRXQSU0",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 9),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 9),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("OTRXQSU1",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 10),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 10),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("OTRXQSU2",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 11),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 11),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("OTRXQSU3",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 12),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 12),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("OTRXQSU4",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 13),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 13),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("OTRXQSU5",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 14),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 14),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("OTRXQSU6",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 15),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 15),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("OTRXQSU7",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 16),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 16),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("DSU0CMU",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 17),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 17),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("DSU0REG",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 18),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 18),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("DSU1CMU",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 19),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 19),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("MXL0CMU",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 20),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 20),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("MXL1CMU",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 21),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 21),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("CRSS0CMU",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 22),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 22),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("CRSS1CMU",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 23),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 23),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("CRSS2CMU",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 24),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 24),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
+	MMU_REGION_FLAT_ENTRY("CRSS3CMU",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 25),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 25),
+			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
+
 #else
 #error "Please define UART MMU region mapping"
 #endif
