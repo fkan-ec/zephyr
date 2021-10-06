@@ -6,6 +6,8 @@
 
 /* Enable / Disable SIF register based interrupts */
 #define SIF_REG_INT	0
+#define E1_TO_E1_INT	1
+#define SU_TO_E1_INT	0
 
 #if SIF_REG_INT
 #define SIF_REG_EVENT_TO_CPU_BASE	0x69080540UL
@@ -58,16 +60,26 @@ void doorbell_isr(struct device *dev)
 	config = (struct doorbell_cfg *)dev->config;
 
 #if SIF_REG_INT
+	/* Clear the SIF REG IRQ */
 	/* GIC SPI interrupt number will be (actual hwirq + GIC_SPI_INT_BASE) */
 	doorbell_update_irq_bit((config->irq - GIC_SPI_INT_BASE), 0);
 
 	/* Sample code to trigger irq on remote end (Linux) */
-
 	/* SIF: Use actual hwirq number for Linux side remote irq */
 	//doorbell_update_irq_bit(config->rbell_irq, 1);
-#else
+#endif
+
+#if E1_TO_E1_INT
+	/* No need to clear the IRQ explicitly */
+
+	/* Sample code to trigger irq on remote end (Linux) */
 	/* GIC-SPI: Set the Linux side interrupt as pending inside GIC */
 	//z_arm64_spi_irq_set_pending(config->rbell_irq);
+#endif
+
+#if SU_TO_E1_INT
+	/* Clear SU side IRQ */
+	su_clear_irq(config->irq);
 #endif
 
 	data->isr_count++;
