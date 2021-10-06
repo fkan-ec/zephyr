@@ -1,0 +1,1 @@
+zephyr_sources_ifdef(CONFIG_BOARD_EDGEQ_RAPTOR2 raptor2_irq_helper.c)
