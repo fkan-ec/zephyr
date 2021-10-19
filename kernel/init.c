@@ -183,11 +183,16 @@ static void bg_thread_main(void *unused1, void *unused2, void *unused3)
 #endif /* CONFIG_MMU */
 	z_sys_post_kernel = true;
 
+#ifdef CONFIG_SMP
+	z_smp_init();
+	z_sys_init_run_level(_SYS_INIT_LEVEL_SMP);
+#endif
+	boot_banner();
+
 	z_sys_init_run_level(_SYS_INIT_LEVEL_POST_KERNEL);
 #if CONFIG_STACK_POINTER_RANDOM
 	z_stack_adjust_initialized = 1;
 #endif
-	boot_banner();
 
 #if defined(CONFIG_CPLUSPLUS) && !defined(CONFIG_ARCH_POSIX)
 	void z_cpp_init_static(void);
@@ -201,11 +206,6 @@ static void bg_thread_main(void *unused1, void *unused2, void *unused3)
 
 #ifdef CONFIG_KERNEL_COHERENCE
 	__ASSERT_NO_MSG(arch_mem_coherent(&_kernel));
-#endif
-
-#ifdef CONFIG_SMP
-	z_smp_init();
-	z_sys_init_run_level(_SYS_INIT_LEVEL_SMP);
 #endif
 
 #ifdef CONFIG_MMU
