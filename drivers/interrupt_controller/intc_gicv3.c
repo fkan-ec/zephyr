@@ -300,6 +300,25 @@ static void gicv3_cpuif_init(void)
 	write_sysreg(1, ICC_IGRPEN1_EL1);
 }
 
+static int gicv3_dist_init_amp(void)
+{
+	volatile unsigned int val = 0;
+	uint32_t timeout_us = 5000000;
+	uint32_t delay_us = 100000;
+
+	/* Wait for master OS to program GICD with a timeout of 5 sec */
+	do {
+		val = sys_read32(GICD_CTLR);
+		k_busy_wait(delay_us);
+		timeout_us = timeout_us - delay_us;
+	} while (val != 0x12 && timeout_us);
+
+	if (val == 0x12)
+		return 0;
+	else
+		return -1;
+}
+
 /*
  * TODO: Consider Zephyr in EL1NS.
  */
@@ -404,7 +423,8 @@ int arm_gic_init(const struct device *unused)
 #ifdef CONFIG_SMP
 	mpidr_list[0] = primary_cpu_mpidr;
 #endif
-	gicv3_dist_init();
+	if (gicv3_dist_init_amp() < 0)
+		gicv3_dist_init();
 
 	__arm_gic_init();
 
