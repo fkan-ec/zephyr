@@ -1,0 +1,131 @@
+------------------- Building for SoCFM ---------------------------------
+
+Build for: SoCFM model
+
+Instruction to build:
+rm -rf build
+west build -b raptor2_socfm samples/subsys/shell/shell_module/
+
+Image Path in zephyr:
+build/zephyr/zephyr.elf
+
+Defconfig Location in zephyr:
+boards/arm64/raptor2/raptor2_socfm_defconfig
+
+Dts Location in zephyr:
+boards/arm64/raptor2/raptor2_socfm.dts
+
+Board Identify as per defconfig:
+CONFIG_BOARD_EDGEQ_RAPTOR2_SOCFM
+
+SoCFM Boot command:
+Tested On model release: 1 June 2021
+http://ecdevuss1:8081/edgecompute/functional_models/-/jobs/9432/artifacts/download
+
+Launch SoCFM:
+
+./EVS_CPUSS_Neoverse-E1x4.x --su-no-brom --no-ppu-su --data=./fip.bin@0x18000000 --data=./zephyr.elf@0x8E000000  -C  R2_SOCL.CPUE1.cpu0.thread1.RVBARADDR=0x180000000 -C "R2_SOCL.CPUE1.BROADCASTOUTER=false" -C "R2_SOCL.CPUE1.BROADCASTOUTER=false"  -C R2_SOCL.CPUE1.cpu1.thread0.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu1.thread1.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu2.thread0.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu2.thread1.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu3.thread0.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu3.thread1.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu4.thread0.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu4.thread1.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu5.thread0.RVBARADDR=0x180000000 -C R2_SOCL.CPUE1.cpu5.thread1.RVBARADDR=0x180000000 -C R2_SOCL.PPUE1.cpu1.thread0.RVBARADDR=0x180000000 -C R2_SOCL.PPUE1.cpu1.thread1.RVBARADDR=0x180000000 -C R2_SOCL.PPUE1.cpu0.thread1.RVBARADDR=0x180000000 -C R2_SOCL.virtfs.root_path=/ec/scratch/pranav.sawargaonkar/fastmodel_soc_14jan/share/ -C R2_SOCL.virtfs.mount_tag=FM  -C R2_SOCL.virtnet.enabled=1 -C R2_SOCL.virtnet.hostbridge.userNetworking=0 -C R2_SOCL.virtnet.hostbridge.interfaceName=tap0 -C R2_SOCL.virtnet.mac_address="96:C1:E8:A2:41:2F"
+
+Boot Zephyr on Uboot:
+bootelf 0x40E000000
+
+------------------------------------------------------------------------
+
+------------------- Building for protium -------------------------------
+
+Build for: Protium with 8 core (16 CPU threads)
+
+Instruction to build:
+rm -rf build
+west build -b raptor2_protium samples/subsys/shell/shell_module/
+
+Image Path in zephyr:
+build/zephyr/zephyr.elf
+
+Defconfig Location in zephyr:
+boards/arm64/raptor2/raptor2_protium_defconfig
+
+Dts Location in zephyr:
+boards/arm64/raptor2/raptor2_protium.dts
+
+Board Identify as per defconfig:
+CONFIG_BOARD_EDGEQ_RAPTOR2_PROTIUM
+
+Boot Zephyr on Uboot:
+bootelf 0x403000000
+
+-------------------------------------------------------------------------
+
+------------------- Building for protium with ppu only ------------------
+
+Build for: Protium with only 1 PPU core (1 CPU thread)
+
+Instruction to build:
+rm -rf build
+west build -b raptor2_protium_single_ppu samples/subsys/shell/shell_module/
+
+Image Path in zephyr:
+build/zephyr/zephyr.elf
+
+Defconfig Location in zephyr:
+boards/arm64/raptor2/raptor2_protium_single_ppu_defconfig
+
+Dts Location in zephyr:
+boards/arm64/raptor2/raptor2_protium_single_ppu.dts
+
+Board Identify as per defconfig:
+CONFIG_BOARD_EDGEQ_RAPTOR2_PROTIUM_SINGLE_PPU
+
+Boot Zephyr on Uboot:
+bootelf 0x403000000
+
+-------------------------------------------------------------------------
+
+------------------- Building for A0 board -------------------------------
+
+Build for: A0 board with 8 core (16 CPU threads)
+
+Instruction to build:
+rm -rf build
+west build -b raptor2_a0 samples/subsys/shell/shell_module/
+
+Image Path in zephyr:
+build/zephyr/zephyr.elf
+
+Defconfig Location in zephyr:
+boards/arm64/raptor2/raptor2_a0_defconfig
+
+Dts Location in zephyr:
+boards/arm64/raptor2/raptor2_a0.dts
+
+Board Identify as per defconfig:
+CONFIG_BOARD_EDGEQ_RAPTOR2_A0
+
+Boot Zephyr on Uboot:
+bootelf 0x405000000
+
+-------------------------------------------------------------------------
+
+------------------- Building for A0 board with PPU only -----------------
+
+Build for: A0 board with 2 PPU cores (4 CPU threads)
+
+Instruction to build:
+rm -rf build
+west build -b raptor2_a0_ppu samples/subsys/shell/shell_module/
+
+Image Path in zephyr:
+build/zephyr/zephyr.elf
+
+Defconfig Location in zephyr:
+boards/arm64/raptor2/raptor2_a0_ppu_defconfig
+
+Dts Location in zephyr:
+boards/arm64/raptor2/raptor2_a0_ppu.dts
+
+Board Identify as per defconfig:
+CONFIG_BOARD_EDGEQ_RAPTOR2_A0_PPU
+
+Boot Zephyr on Uboot:
+bootzf 0x405000000
+
