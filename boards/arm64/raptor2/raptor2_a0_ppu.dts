@@ -26,6 +26,20 @@
 		#address-cells = <0x02>;
 		#size-cells = <0x00>;
 
+		cpu@500 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			enable-method = "psci";
+			reg = <0x0 0x500>;
+		};
+
+		cpu@501 {
+			device_type = "cpu";
+			compatible = "arm,neoverse-e1";
+			enable-method = "psci";
+			reg = <0x0 0x501>;
+		};
+
 		cpu@10000 {
 			device_type = "cpu";
 			compatible = "arm,neoverse-e1";
@@ -75,7 +89,7 @@
 		ranges;
 		interrupt-controller;
 		reg =   <0x1 0x40000000 0x0 0x40000>,
-			<0x1 0x401C0000 0x0 0x80000>;
+			<0x1 0x40180000 0x0 0xC0000>;
 		label = "GIC";
 	};
 
