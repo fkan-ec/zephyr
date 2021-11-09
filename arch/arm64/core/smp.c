@@ -28,6 +28,7 @@
 #define SGI_SCHED_IPI	0
 #define SGI_PTABLE_IPI	1
 #define SGI_FPU_IPI	2
+#define SGI_SYSTEM_HALT_IPI	3
 
 struct boot_params {
 	uint64_t mpid;
@@ -151,6 +152,7 @@ void z_arm64_secondary_start(void)
 	arm_gic_secondary_init();
 
 	irq_enable(SGI_SCHED_IPI);
+	irq_enable(SGI_SYSTEM_HALT_IPI);
 #ifdef CONFIG_USERSPACE
 	irq_enable(SGI_PTABLE_IPI);
 #endif
@@ -251,6 +253,22 @@ void z_arm64_flush_fpu_ipi(unsigned int cpu)
 }
 #endif
 
+FUNC_NORETURN void system_halt_ipi_handler(const void *unused)
+{
+	ARG_UNUSED(unused);
+
+	(void)arch_irq_lock();
+	for (;;) {
+		/* Spin endlessly */
+	}
+	CODE_UNREACHABLE;
+}
+
+void z_arm64_system_halt_ipi(void)
+{
+	broadcast_ipi(SGI_SYSTEM_HALT_IPI);
+}
+
 static int arm64_smp_init(const struct device *dev)
 {
 	ARG_UNUSED(dev);
@@ -270,6 +288,9 @@ static int arm64_smp_init(const struct device *dev)
 	IRQ_CONNECT(SGI_FPU_IPI, IRQ_DEFAULT_PRIORITY, flush_fpu_ipi_handler, NULL, 0);
 	irq_enable(SGI_FPU_IPI);
 #endif
+
+	IRQ_CONNECT(SGI_SYSTEM_HALT_IPI, IRQ_DEFAULT_PRIORITY, system_halt_ipi_handler, NULL, 0);
+	irq_enable(SGI_SYSTEM_HALT_IPI);
 
 	return 0;
 }

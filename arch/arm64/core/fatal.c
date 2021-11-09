@@ -32,6 +32,23 @@ static const struct z_exc_handle exceptions[] = {
 };
 #endif /* CONFIG_USERSPACE */
 
+#ifdef CONFIG_SMP
+extern void z_arm64_system_halt_ipi(void);
+
+FUNC_NORETURN void arch_system_halt(unsigned int reason)
+{
+	ARG_UNUSED(reason);
+
+	/* Broadcast an interrupt to halt other CPUs (spin endlessly) */
+	z_arm64_system_halt_ipi();
+
+	(void)arch_irq_lock();
+	for (;;) {
+		/* Spin endlessly */
+	}
+}
+#endif
+
 #ifdef CONFIG_EXCEPTION_DEBUG
 static void dump_esr(uint64_t esr, bool *dump_far)
 {
