@@ -141,7 +141,7 @@ void z_arm64_secondary_start(void)
 	arch_cpustart_t fn;
 	void *arg;
 
-	__ASSERT(arm64_cpu_boot_params.mpid == MPIDR_TO_CORE(GET_MPIDR()), "");
+	__ASSERT(arm64_cpu_boot_params.mpid == (GET_MPIDR() & MPIDR_AFFGRP_MASK) , "");
 
 	/* Initialize tpidrro_el0 with our struct _cpu instance address */
 	write_tpidrro_el0((uintptr_t)&_kernel.cpus[cpu_num]);

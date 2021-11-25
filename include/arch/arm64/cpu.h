@@ -67,6 +67,7 @@
 
 /* MPIDR */
 #define MPIDR_AFFLVL_MASK	(0xff)
+#define MPIDR_AFFGRP_MASK	(0xffffff)
 
 #define MPIDR_AFF0_SHIFT	(0)
 #define MPIDR_AFF1_SHIFT	(8)
