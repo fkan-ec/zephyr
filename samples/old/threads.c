@@ -120,11 +120,11 @@ void setup_thread_e()
 
 void threads_init(void)
 {
-    setup_thread_a();
-    setup_thread_b();
-    setup_thread_c();
-    setup_thread_d();
-    setup_thread_e();
+	setup_thread_a();
+	setup_thread_b();
+	setup_thread_c();
+	setup_thread_d();
+	setup_thread_e();
 
 	/* Create all threads registered with platform */
 	for(uint32_t i = 0; i <  sizeof(g_threads)/sizeof(threads_ctxt_t); ++i)
@@ -137,20 +137,20 @@ void threads_init(void)
                                 K_POLL_MODE_NOTIFY_ONLY,
                               &g_threads[i].signal_list[j]);
 
-            /* Store the signal id in the event to use it for handler lookup */
+			/* Store the signal id in the event to use it for handler lookup */
 			g_threads[i].event_list[j].tag = j;
 		}
 
 		k_tid_t tid = k_thread_create(&g_threads[i].thread, 
-									  g_threads[i].tid_stack,
-          			   				  g_threads[i].stack_size,
-      							      g_threads[i].entry_func,
-									  g_threads[i].event_list,
-									  g_threads[i].num_events, 
-                                      &g_threads[i].app_thread_id,
-      						          g_threads[i].prio, 
-									  g_threads[i].options, 
-									  K_FOREVER);
+				g_threads[i].tid_stack,
+				g_threads[i].stack_size,
+				g_threads[i].entry_func,
+				g_threads[i].event_list,
+				g_threads[i].num_events, 
+				&g_threads[i].app_thread_id,
+				g_threads[i].prio, 
+				g_threads[i].options, 
+				K_FOREVER);
 
 		k_thread_name_set(tid, g_threads[i].thread_name);
 
@@ -158,71 +158,39 @@ void threads_init(void)
 	}
 }
 
-static void process_poll_events(int num_events, uint32_t app_thread_id)
-{
-    app_sig_hdlr_ctxt_t * sig_hdlr = g_threads[app_thread_id].sig_hdlr;
-    for (uint32_t ev = 0; ev < num_events; ev++) {
-        if(sig_hdlr[ev].hdlr_fn)
-        {
-            sig_hdlr[ev].hdlr_fn(sig_hdlr[ev].arg);
-        }
-    }
-}
-
-void thread_event_loop_poll(void *event_list, void *n_events, void *thread_id)
-{
-	k_tid_t tid = k_current_get();	
-	uint32_t num_events = *(uint32_t*)n_events;
-	uint32_t app_thread_id = *(uint32_t*)thread_id;
-
-	printf("Polling Thread %s launched with events %d and app_thread_id %d\n",
-											k_thread_name_get(tid), num_events, app_thread_id);
-
-	while (1)
-	{
-        process_poll_events(num_events, app_thread_id);
-    }
-}
 
 static void process_events(struct k_poll_event *ev, int count, uint32_t app_thread_id)
 {
     app_sig_hdlr_ctxt_t * sig_hdlr = g_threads[app_thread_id].sig_hdlr;
     Eapp_sig_hdlr_status_t status = 0;
+    count = 2;
 
 	/* We can get fancy here to decide which events to prioritize. For now RR scheduling */
     for (; count; ev++, count--) {
         switch (ev->state) {
-        case K_POLL_STATE_SIGNALED:
+		case K_POLL_STATE_SIGNALED:
 			/* Handle Signal */
 			if(sig_hdlr[ev->tag].hdlr_fn)
 			{
-                /* TODO: add profiler for signal handlers */
-                /* Reset signal first - this may race with producers trying to set it.
-                 * This should be okay, as we call the handler after signalled is cleared.
-                 * All handlers should run to completion else return e_plat_sig_hdlr_continue.
-                 */
-                k_poll_signal_reset(ev->signal);
-                ev->state = K_POLL_STATE_NOT_READY;
-                status = sig_hdlr[ev->tag].hdlr_fn(sig_hdlr[ev->tag].arg);
-                if (status == e_sig_hdlr_continue) {
-                    /* Service other events for this thread and come back to this via k_poll again. */
-                    ev->signal->signaled = 1;  
-                    ev->state = K_POLL_STATE_SIGNALED;
-                }
-            } else {
-                __ASSERT_NO_MSG(0);
-            }
-            break;
-        case K_POLL_STATE_FIFO_DATA_AVAILABLE:
+				/* TODO: add profiler for signal handlers */
+				/* Reset signal first - this may race with producers trying to set it.
+				 * This should be okay, as we call the handler after signalled is cleared.
+				 * All handlers should run to completion else return e_plat_sig_hdlr_continue.
+				 */
+				status = sig_hdlr[ev->tag].hdlr_fn(sig_hdlr[ev->tag].arg);
+				ev->signal->signaled = 0;  
+				ev->state = K_POLL_STATE_NOT_READY;
+			} else {
+				printk("no thread handler found\n");
+			}
+			break;
+		case K_POLL_STATE_NOT_READY:
 			/* TODO */
-            break;
-        case K_POLL_STATE_NOT_READY:
-			/* TODO */
-            break;
-        default:
-            printf("Unexpected k_poll event state %u", ev->state);
-            break;
-        }
+			break;
+		default:
+			printk("Unexpected k_poll event state %u", ev->state);
+			break;
+	}
     }
 }
 
@@ -232,10 +200,10 @@ void thread_event_loop(void *event_list, void *n_events, void *thread_id)
 	struct k_poll_event *events = event_list;
 	uint32_t num_events = *(uint32_t*)n_events;
 	uint32_t app_thread_id = *(uint32_t*)thread_id;
-    int rc;
+	int rc;
 
-	printf("Thread %s launched with events %d and app_thread_id %d\n",
-											k_thread_name_get(tid), num_events, app_thread_id);
+	printk("Thread %s launched with %d events and app_thread_id %d\n",
+			k_thread_name_get(tid), num_events, app_thread_id);
 
 	while (1)
 	{
@@ -245,17 +213,13 @@ void thread_event_loop(void *event_list, void *n_events, void *thread_id)
 		 * k_poll() was called, or due to the preemptive multi-threading nature of the kernel. 
 		 * The caller must look at the state of all the poll events in the array to figured out which ones were fulfilled and what actions to take.
 		 */
+		rc = k_poll(events, num_events, K_FOREVER);
 
-        rc = k_poll(events, num_events, K_FOREVER);
-		
-        if(rc == 0) {
-			//printf("Thread %s got something\n", k_thread_name_get(tid));
+		if(rc == 0) {
+			process_events(events, num_events, app_thread_id);
 		} else {
 			/* TODO: Dont know how to handle this */
-			printf("Thread timedout\n");
+			printk("Thread timedout %d\n", rc);
 		} 
-
-		process_events(events, num_events, app_thread_id);
-		 
 	}
 }

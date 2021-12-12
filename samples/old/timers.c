@@ -62,21 +62,5 @@ void app_timer_init(struct k_timer * my_timer, uint32_t app_thread_id, uint32_t 
     k_timer_user_data_set(my_timer, my_signal);
 }
 
-uint32_t app_get_current_time_32_us()
-{
-    uint32_t cur_cycles = (uint32_t)arm_arch_timer_count();
-    return k_cyc_to_us_near32(cur_cycles);
-}
 
-uint32_t app_get_current_time_32_ns()
-{
-    uint32_t cur_cycles = (uint32_t)arm_arch_timer_count();
-    return k_cyc_to_ns_near32(cur_cycles);
-}
-
-uint64_t app_get_current_time_64_us()
-{
-    uint64_t cur_cycles = arm_arch_timer_count();
-    return k_cyc_to_us_near64(cur_cycles);
-}
 

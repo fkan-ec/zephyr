@@ -79,6 +79,5 @@ int main()
 
     APP_TIMER_INIT(&g_thread_e_timer2, e_app_threads_e, thread_timeout_handler, NULL);
     APP_TIMER_PERIODIC_START_US(&g_thread_e_timer2, 2000 /* 2 millisecond */);
-
-	return 0;
+    return 0;
 }

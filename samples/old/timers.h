@@ -5,9 +5,6 @@
 
 int app_get_timer_next_free_sig_id(uint32_t app_thread_id);
 void app_timer_init(struct k_timer * my_timer, uint32_t app_thread_id, uint32_t timer_sig_id);
-uint32_t app_get_current_time_32_us();
-uint32_t app_get_current_time_32_ns();
-uint64_t app_get_current_time_64_us();
 
 #define APP_TIMER_DEFINE(my_timer) struct k_timer my_timer
 /* We can also implicitly derive the thread_id but that would restrict all timers to be initialized
