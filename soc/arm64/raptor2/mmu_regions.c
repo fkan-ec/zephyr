@@ -206,6 +206,16 @@ static const struct arm_mmu_region mmu_regions[] = {
 			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 25),
 			      MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS),
 
+	MMU_REGION_FLAT_ENTRY("DDR_1",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 26),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 26),
+			      MT_NORMAL | MT_P_RW_U_NA | MT_DEFAULT_SECURE_STATE),
+
+	MMU_REGION_FLAT_ENTRY("DDR_2",
+			      DT_REG_ADDR_BY_IDX(DT_INST(0, raptor2_mmio), 27),
+			      DT_REG_SIZE_BY_IDX(DT_INST(0, raptor2_mmio), 27),
+			      MT_NORMAL | MT_P_RW_U_NA | MT_DEFAULT_SECURE_STATE),
+
 #else
 #error "Please define UART MMU region mapping"
 #endif
