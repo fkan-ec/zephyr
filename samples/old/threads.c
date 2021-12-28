@@ -14,7 +14,7 @@ void setup_thread_a()
     threads_ctxt_t *plat_ctxt = &g_threads[e_app_threads_a];
     plat_ctxt->app_thread_id = e_app_threads_a;
     strncpy(plat_ctxt->thread_name, "THREAD_A", MAX_APP_THREAD_NAME);
-    plat_ctxt->prio         = -2;
+    plat_ctxt->prio         = 1;
     plat_ctxt->event_list   = g_thread_a_events;
     plat_ctxt->signal_list  = g_thread_a_signals;
     plat_ctxt->num_events   = &app_max_thread_a_events;
@@ -37,7 +37,7 @@ void setup_thread_b()
     threads_ctxt_t *plat_ctxt = &g_threads[e_app_threads_b];
     plat_ctxt->app_thread_id = e_app_threads_b;
     strncpy(plat_ctxt->thread_name, "THREAD_B", MAX_APP_THREAD_NAME);
-    plat_ctxt->prio         = 0;
+    plat_ctxt->prio         = 2;
     plat_ctxt->event_list   = g_thread_b_events;
     plat_ctxt->signal_list  = g_thread_b_signals;
     plat_ctxt->num_events   = &app_max_thread_b_events;
@@ -60,7 +60,7 @@ void setup_thread_c()
     threads_ctxt_t *plat_ctxt = &g_threads[e_app_threads_c];
     plat_ctxt->app_thread_id = e_app_threads_c;
     strncpy(plat_ctxt->thread_name, "THREAD_C", MAX_APP_THREAD_NAME);
-    plat_ctxt->prio         = 1;
+    plat_ctxt->prio         = 3;
     plat_ctxt->event_list   = g_thread_c_events;
     plat_ctxt->signal_list  = g_thread_c_signals;
     plat_ctxt->num_events   = &app_max_thread_c_events;
@@ -83,7 +83,7 @@ void setup_thread_d()
     threads_ctxt_t *plat_ctxt = &g_threads[e_app_threads_d];
     plat_ctxt->app_thread_id = e_app_threads_d;
     strncpy(plat_ctxt->thread_name, "THREAD_D", MAX_APP_THREAD_NAME);
-    plat_ctxt->prio         = 1;
+    plat_ctxt->prio         = 4;
     plat_ctxt->event_list   = g_thread_d_events;
     plat_ctxt->signal_list  = g_thread_d_signals;
     plat_ctxt->num_events   = &app_max_thread_d_events;
@@ -106,7 +106,7 @@ void setup_thread_e()
     threads_ctxt_t *plat_ctxt = &g_threads[e_app_threads_e];
     plat_ctxt->app_thread_id = e_app_threads_e;
     strncpy(plat_ctxt->thread_name, "THREAD_E", MAX_APP_THREAD_NAME);
-    plat_ctxt->prio         = 2;
+    plat_ctxt->prio         = -5;
     plat_ctxt->event_list   = g_thread_e_events;
     plat_ctxt->signal_list  = g_thread_e_signals;
     plat_ctxt->num_events   = &app_max_thread_e_events;

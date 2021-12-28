@@ -34,12 +34,6 @@ APP_TIMER_DEFINE(g_thread_e_timer2);
 _Atomic uint32_t g_count;
 Eapp_sig_hdlr_status_t thread_timeout_handler(void * arg)
 {
-    g_count++;
-    static uint64_t load = 0;
-    for(uint32_t i = 0; i < 100000; ++i)
-    {
-        load *= 0.7678;
-    }
     return e_sig_hdlr_complete;
 }
 
@@ -53,31 +47,21 @@ int main()
     APP_TIMER_INIT(&g_thread_a_timer, e_app_threads_a, thread_timeout_handler, NULL);
     APP_TIMER_PERIODIC_START_US(&g_thread_a_timer, 2000 /* 2 millisecond */);
 
-    APP_TIMER_INIT(&g_thread_a_timer2, e_app_threads_a, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_a_timer2, 2000 /* 2 millisecond */);
 
     APP_TIMER_INIT(&g_thread_b_timer, e_app_threads_b, thread_timeout_handler, NULL);
     APP_TIMER_PERIODIC_START_US(&g_thread_b_timer, 2000 /* 2 millisecond */);
 
-    APP_TIMER_INIT(&g_thread_b_timer2, e_app_threads_b, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_b_timer2, 2000 /* 2 millisecond */);
 
     APP_TIMER_INIT(&g_thread_c_timer, e_app_threads_c, thread_timeout_handler, NULL);
     APP_TIMER_PERIODIC_START_US(&g_thread_c_timer, 2000 /* 2 millisecond */);
 
-    APP_TIMER_INIT(&g_thread_c_timer2, e_app_threads_c, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_c_timer2, 2000 /* 2 millisecond */);
 
     APP_TIMER_INIT(&g_thread_d_timer, e_app_threads_d, thread_timeout_handler, NULL);
     APP_TIMER_PERIODIC_START_US(&g_thread_d_timer, 2000 /* 2 millisecond */);
 
-    APP_TIMER_INIT(&g_thread_d_timer2, e_app_threads_d, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_d_timer2, 2000 /* 2 millisecond */);
 
     APP_TIMER_INIT(&g_thread_e_timer, e_app_threads_e, thread_timeout_handler, NULL);
     APP_TIMER_PERIODIC_START_US(&g_thread_e_timer, 2000 /* 2 millisecond */);
 
-    APP_TIMER_INIT(&g_thread_e_timer2, e_app_threads_e, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_e_timer2, 2000 /* 2 millisecond */);
     return 0;
 }
