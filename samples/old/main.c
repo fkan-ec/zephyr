@@ -44,24 +44,24 @@ int main()
 	threads_init();
 
     /* Launch timers for each of the thread */
-    APP_TIMER_INIT(&g_thread_a_timer, e_app_threads_a, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_a_timer, 2000 /* 2 millisecond */);
+    setup_timer(&g_thread_a_timer, e_app_threads_a, thread_timeout_handler, NULL);
+    k_timer_start(&g_thread_a_timer, K_USEC(2000), K_USEC(2000));
 
 
-    APP_TIMER_INIT(&g_thread_b_timer, e_app_threads_b, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_b_timer, 2000 /* 2 millisecond */);
+    setup_timer(&g_thread_b_timer, e_app_threads_b, thread_timeout_handler, NULL);
+    k_timer_start(&g_thread_b_timer, K_USEC(2000), K_USEC(2000));
 
 
-    APP_TIMER_INIT(&g_thread_c_timer, e_app_threads_c, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_c_timer, 2000 /* 2 millisecond */);
+    setup_timer(&g_thread_c_timer, e_app_threads_c, thread_timeout_handler, NULL);
+    k_timer_start(&g_thread_c_timer, K_USEC(2000), K_USEC(2000));
 
 
-    APP_TIMER_INIT(&g_thread_d_timer, e_app_threads_d, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_d_timer, 2000 /* 2 millisecond */);
+    setup_timer(&g_thread_d_timer, e_app_threads_d, thread_timeout_handler, NULL);
+    k_timer_start(&g_thread_d_timer, K_USEC(2000), K_USEC(2000));
 
 
-    APP_TIMER_INIT(&g_thread_e_timer, e_app_threads_e, thread_timeout_handler, NULL);
-    APP_TIMER_PERIODIC_START_US(&g_thread_e_timer, 2000 /* 2 millisecond */);
+    setup_timer(&g_thread_e_timer, e_app_threads_e, thread_timeout_handler, NULL);
+    k_timer_start(&g_thread_e_timer, K_USEC(2000), K_USEC(2000));
 
     return 0;
 }
