@@ -32,36 +32,32 @@ APP_TIMER_DEFINE(g_thread_e_timer2);
  * and no error is raised.
  */
 _Atomic uint32_t g_count;
-Eapp_sig_hdlr_status_t thread_timeout_handler(void * arg)
+Eapp_sig_hdlr_status_t thread_timeout_handler(void *arg)
 {
-    return e_sig_hdlr_complete;
+	return e_sig_hdlr_complete;
 }
 
 int main()
 {
-    printf("Entered Main \n");
+	printf("Entered Main \n");
 	printf("Initializing threads\n");
 	threads_init();
 
-    /* Launch timers for each of the thread */
-    setup_timer(&g_thread_a_timer, e_app_threads_a, thread_timeout_handler, NULL);
-    k_timer_start(&g_thread_a_timer, K_USEC(2000), K_USEC(2000));
+	/* Launch timers for each of the thread */
+	setup_timer(&g_thread_a_timer, e_app_threads_a, thread_timeout_handler, NULL);
+	k_timer_start(&g_thread_a_timer, K_USEC(2000), K_USEC(2000));
 
+	setup_timer(&g_thread_b_timer, e_app_threads_b, thread_timeout_handler, NULL);
+	k_timer_start(&g_thread_b_timer, K_USEC(2000), K_USEC(2000));
 
-    setup_timer(&g_thread_b_timer, e_app_threads_b, thread_timeout_handler, NULL);
-    k_timer_start(&g_thread_b_timer, K_USEC(2000), K_USEC(2000));
-
-
-    setup_timer(&g_thread_c_timer, e_app_threads_c, thread_timeout_handler, NULL);
-    k_timer_start(&g_thread_c_timer, K_USEC(2000), K_USEC(2000));
-
+	setup_timer(&g_thread_c_timer, e_app_threads_c, thread_timeout_handler, NULL);
+	k_timer_start(&g_thread_c_timer, K_USEC(2000), K_USEC(2000));
 
     setup_timer(&g_thread_d_timer, e_app_threads_d, thread_timeout_handler, NULL);
-    k_timer_start(&g_thread_d_timer, K_USEC(2000), K_USEC(2000));
+	k_timer_start(&g_thread_d_timer, K_USEC(2000), K_USEC(2000));
 
+	setup_timer(&g_thread_e_timer, e_app_threads_e, thread_timeout_handler, NULL);
+	k_timer_start(&g_thread_e_timer, K_USEC(2000), K_USEC(2000));
 
-    setup_timer(&g_thread_e_timer, e_app_threads_e, thread_timeout_handler, NULL);
-    k_timer_start(&g_thread_e_timer, K_USEC(2000), K_USEC(2000));
-
-    return 0;
+	return 0;
 }
