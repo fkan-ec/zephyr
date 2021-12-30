@@ -136,6 +136,8 @@ void threads_init(void)
 			/* Store the signal id in the event to use it for handler lookup */
 			g_threads[i].event_list[j].tag = j;
 		}
+		g_threads[i].send_signals = 0;
+		g_threads[i].recv_signals = 0;
 
 		k_tid_t tid = k_thread_create(&g_threads[i].thread, g_threads[i].tid_stack,
 					      g_threads[i].stack_size, g_threads[i].entry_func,
@@ -166,6 +168,7 @@ static void process_events(struct k_poll_event *ev, int count, uint32_t app_thre
 				 * This should be okay, as we call the handler after signalled is cleared.
 				 * All handlers should run to completion else return e_plat_sig_hdlr_continue.
 				 */
+				g_threads[app_thread_id].recv_signals += 1;
 				status = sig_hdlr[ev->tag].hdlr_fn(sig_hdlr[ev->tag].arg);
 				ev->signal->signaled = 0;
 				ev->state = K_POLL_STATE_NOT_READY;
@@ -206,7 +209,6 @@ void thread_event_loop(void *event_list, void *n_events, void *thread_id)
 			process_events(events, num_events, app_thread_id);
 		} else {
 			/* TODO: Dont know how to handle this */
-			printk("Thread timedout %d\n", rc);
 		}
 	}
 }

@@ -8,7 +8,7 @@
 #define APP_THREADS_STACK_SIZE 4096
 
 /* MAX timers per thread */
-#define APP_THREADS_MAX_TIMERS 5
+#define APP_THREADS_MAX_TIMERS 1
 
 #define APP_THREAD_ALL_CPU ~0
 
@@ -99,6 +99,8 @@ typedef struct threads_ctxt {
 	void *entry_func;
 	struct z_thread_stack_element *tid_stack;
 	uint32_t stack_size;
+	uint32_t send_signals;
+	uint32_t recv_signals;
 } threads_ctxt_t;
 
 extern threads_ctxt_t g_threads[e_app_threads_max];

@@ -3,19 +3,15 @@
 #include <zephyr.h>
 #include <threads.h>
 #include <timers.h>
+#include <shell/shell.h>
 
 extern void threads_init(void);
 
 APP_TIMER_DEFINE(g_thread_a_timer);
-APP_TIMER_DEFINE(g_thread_a_timer2);
 APP_TIMER_DEFINE(g_thread_b_timer);
-APP_TIMER_DEFINE(g_thread_b_timer2);
 APP_TIMER_DEFINE(g_thread_c_timer);
-APP_TIMER_DEFINE(g_thread_c_timer2);
 APP_TIMER_DEFINE(g_thread_d_timer);
-APP_TIMER_DEFINE(g_thread_d_timer2);
 APP_TIMER_DEFINE(g_thread_e_timer);
-APP_TIMER_DEFINE(g_thread_e_timer2);
 
 /** @brief  Zephyr main thread.
  *
@@ -31,9 +27,11 @@ APP_TIMER_DEFINE(g_thread_e_timer2);
  * is not defined, or if it executes and then does a normal return, the main thread terminates normally 
  * and no error is raised.
  */
-_Atomic uint32_t g_count;
 Eapp_sig_hdlr_status_t thread_timeout_handler(void *arg)
 {
+	/*
+	 * Dummy function
+	 */
 	return e_sig_hdlr_complete;
 }
 
@@ -59,5 +57,29 @@ int main()
 	setup_timer(&g_thread_e_timer, e_app_threads_e, thread_timeout_handler, NULL);
 	k_timer_start(&g_thread_e_timer, K_USEC(2000), K_USEC(2000));
 
+	while(1) {};
+	printk("main routine exited\n");
 	return 0;
 }
+
+static int cmd_timer_info(const struct shell *shell, size_t argc, char **argv)
+{
+	int i;
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	printk("Timer Info:\n");
+	for (i = 0; i < 5; i++) {
+		printk("%d: send %d, recv %d\n", i, g_threads[i].send_signals, g_threads[i].recv_signals);
+	}
+	return 0;
+}
+
+#define TIMER_INFO_CMD "Timer Info"
+
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_thread,
+			       SHELL_CMD_ARG(info, NULL, TIMER_INFO_CMD, cmd_timer_info, 1, 0),
+			       SHELL_SUBCMD_SET_END /* Array terminated. */
+);
+
+SHELL_CMD_REGISTER(timer, &sub_thread, "Timer related commands.", NULL);
