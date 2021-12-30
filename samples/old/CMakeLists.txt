@@ -11,7 +11,6 @@ target_sources(
                	PRIVATE 
                 main.c 
                 threads.c 
-                timers.c
               )
 
 list(APPEND EXTRA_LIBS zephyr kernel)
