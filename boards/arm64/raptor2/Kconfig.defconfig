@@ -9,4 +9,12 @@ config BUILD_OUTPUT_BIN
 config BOARD
 	default "raptor2"
 
+config SHARED_MEM_BASE_ADDRESS
+	hex "Shared Memory Base Address"
+	default 0x0
+
+config SHARED_MEM_SIZE
+	int "Shared Memory Size in kB"
+	default 4
+
 endif # BOARD_EDGEQ_RAPTOR2
