@@ -100,16 +100,34 @@ spurious_continue:
 	/*
 	 * x0: 1st thread in the ready queue
 	 * x1: _current thread
+	 *
+	 * 3 possibilities here:
+	 *  - with SMP and x0 != NULL (implies x0 != x1): we need to context
+	 *    switch and set the switch_handle in the context switch code
+	 *  - with SMP and x0 == NULL: no context switch
+	 *  - without SMP: no context switch
 	 */
-	cmp	x0, x1
-	beq	exit
+ #ifdef CONFIG_SMP
+	cmp	x0, #0x0
+	beq	restore
+ #else
+	b	exit
+ #endif
 
 	/* Switch thread */
 	bl	z_arm64_context_switch
+	b	exit
+
+
+restore:
+	/*
+	 * Restore x0 from x1 (they are the same thread). See also comments to
+	 * z_arch_get_next_switch_handle()
+	 */
+	mov	x0, x1
 
 exit:
 #ifdef CONFIG_STACK_SENTINEL
 	bl	z_check_stack_sentinel
 #endif
 	b	z_arm64_exit_exc
-
